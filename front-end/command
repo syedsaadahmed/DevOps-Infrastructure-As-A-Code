@@ -1,0 +1,2 @@
+docker build -t vue_js_my_image .
+docker run -itd -p 8080:80 --name dockerize-vuejs-app-1 vue_js_my_image
