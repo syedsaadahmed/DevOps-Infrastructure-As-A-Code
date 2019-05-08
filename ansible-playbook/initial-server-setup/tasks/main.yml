@@ -1,0 +1,53 @@
+
+- name: Installing Development Tools, KVM Services & other Dependencies...
+  script: packages.sh
+
+- name: Starting and enabling libvirtd service
+  systemd:
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    name: libvirtd
+
+- name: Destroying Default Virtual Network 
+  virt_net:
+    command: destroy
+    name: default
+
+- name: Undefining Default Virtual Network
+  virt_net:
+    command: undefine
+    name: default
+
+- name: Restarting Libvirtd service
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: libvirtd
+
+- name: Disabling unwanted services
+  script: DisableServices.sh
+
+- name: Setup alternate SSH port
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^Port"
+    line: "Port 10896"
+
+- name: restart server
+  shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+  async: 1
+  poll: 0
+  become: true
+  ignore_errors: true
+
+- name: waiting for the server to come back
+  local_action: wait_for host={{ KvmIP }} port=10896 state=started delay=30 timeout=300
+  sudo: false
+
+- name: Changed SSH Port
+  set_fact:
+    ansible_port: 10896
+
+- name: Initializing performance parameters
+  raw: sysctl -p

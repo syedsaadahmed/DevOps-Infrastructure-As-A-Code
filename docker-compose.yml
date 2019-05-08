@@ -1,0 +1,21 @@
+version: '2'
+
+networks:
+  monitor-net:
+    driver: bridge
+
+services:
+
+  django:
+    # image: django_my_image
+    # container_name: django_backend
+    build:
+      context: .
+      dockerfile: /home/saad/Documents/Github/DevOps-Homework/back-end/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    networks:
+      - monitor-net

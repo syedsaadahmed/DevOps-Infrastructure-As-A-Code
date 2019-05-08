@@ -1,0 +1,37 @@
+version: '2'
+
+networks:
+  monitor-net:
+    driver: bridge
+
+
+services:
+
+  vuejs:
+    image: image_name
+    container_name: vuejs_frontend
+    # command:
+    #   - '--config.file=/etc/prometheus/prometheus.yml'
+    expose:
+      - 80
+    ports:
+      - "80:8080"
+    networks:
+      - monitor-net
+  
+
+  django:
+    image: image_name
+    container_name: django_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    networks:
+      - monitor-net
+
+
+  reverse_proxy:
+   image: image_name
+   container_name: reverse_proxy_ha

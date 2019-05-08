@@ -1,0 +1,50 @@
+
+- name: Downloading LinuxBox VPNServer Template
+  command: 
+
+- name: Extracting VPNserver Template
+  unarchive:
+    src: /root/vpnserver-temp.tar.gz
+    dest: /home/kvm/images/
+    remote_src: True
+
+- name: System preparation is running on Template
+  command: virt-sysprep -a /home/kvm/images/vpnserver.qcow2
+
+- name: provisioning VPNServer
+  command: virt-install -n {{ LuxHostname }}
+           --ram 8192 \
+           --vcpus 8 \
+           --os-type linux \
+           --os-variant rhel7 \
+           --import \
+           --disk path=/home/kvm/images/vpnserver.qcow2,device=disk,bus=virtio,format=qcow2 \
+           --network bridge=br0 \
+           --network bridge=br1 \
+           --graphics none \
+           --serial tcp,host=127.0.0.1:7001,mode=bind,protocol=telnet
+
+- name: "Starting {{ LuxHostname }} Server"
+  pause:
+    seconds: 40
+
+- name: Configuring {{ LuxHostname }}
+  ignore_errors: yes
+  expect:
+    command: telnet 127.0.0.1 7001
+    timeout: 30
+    responses:
+      "Escape character is": "root"
+      "Password: ": "abc123+"
+      "# ":              
+        - /sbin/iptables -P INPUT ACCEPT 
+        - /sbin/iptables -P FORWARD ACCEPT 
+        - /sbin/iptables -P OUTPUT ACCEPT
+        - exit
+        - quit
+
+- name: Enabling AutoStart on {{ LuxHostname }}
+  command: virsh autostart {{ LuxHostname }}
+
+- name: Applying Configuration Changes on {{ LuxHostname }}
+  command: virsh reboot {{ LuxHostname }}
