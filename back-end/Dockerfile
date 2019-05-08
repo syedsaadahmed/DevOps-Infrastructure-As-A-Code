@@ -24,7 +24,7 @@ RUN python manage.py migrate
 
 
 ## serve with hot reload at localhost:8000
-EXPOSE 80 8000
+EXPOSE 80
 
 
 ENTRYPOINT ["python"]

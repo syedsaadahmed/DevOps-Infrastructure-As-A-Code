@@ -30,6 +30,3 @@ EXPOSE 80
 
 
 ENTRYPOINT [ "sh", "-c", "yarn serve" ]
-
-#ENTRYPOINT ["/bin/sh -c"]
-#CMD ["yarn serve"]
