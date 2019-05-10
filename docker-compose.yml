@@ -6,16 +6,30 @@ networks:
 
 services:
 
-  django:
-    # image: django_my_image
-    # container_name: django_backend
+  # django:
+  #   # image: django_my_image
+  #   # container_name: django_backend
+  #   build:
+  #     context: .
+  #     dockerfile: /home/saad/Documents/Github/DevOps-Homework/back-end/Dockerfile
+  #   command: python manage.py runserver 0.0.0.0:8000
+  #   expose:
+  #     - 8000
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - monitor-net
+
+
+  vuejs:
+    # image: image_name
+    # container_name: vuejs_frontend
     build:
       context: .
-      dockerfile: /home/saad/Documents/Github/DevOps-Homework/back-end/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+      dockerfile: /home/saad/Documents/Github/DevOps-Homework/front-end/Dockerfile    
     expose:
-      - 8000
+      - 8080
     ports:
-      - "8000:8000"
+      - "8080:8080"
     networks:
       - monitor-net

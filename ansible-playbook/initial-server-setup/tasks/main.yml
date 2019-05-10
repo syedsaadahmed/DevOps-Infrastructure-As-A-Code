@@ -1,6 +1,19 @@
-
-- name: Installing Development Tools, KVM Services & other Dependencies...
-  script: packages.sh
+- name: Installing the required software & other Dependencies
+  become: yes
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - libguestfs-tools
+    - libvirt
+    - qemu-kvm
+    - virt-manager
+    - virt-install
+    - xorg-x11-apps
+    - xauth
+    - virt-viewer
+    - libguestfs-xfs
+notify: enable_service
 
 - name: Starting and enabling libvirtd service
   systemd:
@@ -25,8 +38,28 @@
     daemon_reload: yes
     name: libvirtd
 
-- name: Disabling unwanted services
-  script: DisableServices.sh
+- name: Disabling unwanted services on server
+  service:
+    name: "{{ item }}"
+    enabled: no
+    state: stopped
+  with_items:
+    - firewalld
+    - firewalld
+    - NetworkManager
+    - NetworkManager
+    - ntpd
+    - ntpd
+    - postfix
+    - postfix
+    - chronyd
+    - chronyd
+    - avahi-daemon
+    - avahi-daemon
+    - dhclient
+
+- name: Disable SELinux on server
+  selinux: state=disabled  
 
 - name: Setup alternate SSH port
   lineinfile:
@@ -42,7 +75,7 @@
   ignore_errors: true
 
 - name: waiting for the server to come back
-  local_action: wait_for host={{ KvmIP }} port=10896 state=started delay=30 timeout=300
+  local_action: wait_for host={{ baseServerIP }} port=10896 state=started delay=30 timeout=300
   sudo: false
 
 - name: Changed SSH Port
