@@ -1,13 +1,6 @@
 
-- name: Downloading CentOS-7 Server Template
-  command: wget http://centos.excellmedia.net/7/isos/x86_64/CentOS-7-x86_64-Minimal-1804.iso
-
-- name:  Create the qemu centos img
-  command: qemu-img create -f qcow2 centos7-minimal.qcow2 3G
-
-- name: Extracting server Template
-  command: mv /root/centos7-minimal.qcow2 /home/kvm/images/
-
+- name: Getting server Template
+  command: mv /root/DevOps-Homework/VM_IMAGE/centos7-minimal.qcow2 /home/kvm/images/
 
 - name: System preparation is running on Template
   command: virt-sysprep -a /home/kvm/images/centos7-minimal.qcow2
@@ -37,14 +30,5 @@
       "Escape character is": "root"
       "Password: ": "abc123+"
       "# ":              
-        - /sbin/iptables -P INPUT ACCEPT 
-        - /sbin/iptables -P FORWARD ACCEPT 
-        - /sbin/iptables -P OUTPUT ACCEPT
-        - exit
-        - quit
-
-- name: Enabling AutoStart on {{ KVMHostname }}
-  command: virsh autostart {{ KVMHostname }}
-
-- name: Applying Configuration Changes on {{ KVMHostname }}
-  command: virsh reboot {{ KVMHostname }}
+        - cd /root/DevOps-Homework/
+        - docker-compose up -d --build

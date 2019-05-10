@@ -1,2 +1,12 @@
+Command to build docker image from Dockerfile
+
+```
 docker build -t vue_js_my_image .
+```
+
+
+Command to run docker container from image
+
+```
 docker run -itd -p 8080:80 --name dockerize-vuejs-app-1 vue_js_my_image
+```

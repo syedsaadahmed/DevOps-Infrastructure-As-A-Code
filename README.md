@@ -22,11 +22,25 @@ localhost:8000/
 
 ## ANSIBLE PLAYBOOK
 
+Anisble playbook contains two roles, one is initial-server-setup and the other is vm-setup, first of all, to setup the base server on which KVM is to be installed is setup, dependencies and other packages are being installed and configured.
+Secondly the role vm-setup is executed, using which the centos 7 KVM machine is deployed on the base server, which contains all the neccessary packages and dependecies to run docker, docker-compose and other things.
+To execute the playbook one must have ansible installed.
 
+```
+ansible-playbook DevOps-Homework/ansible-playbook/infra-setup.yml --extra-vars "host=XYZ KVMHostname=centos_7_machine baseServerIP=192.168.0.1"
+```
 
 ## DOCKER INFRA-STRUCTURE
 
+Docker-compose.yml, contains all the steps to setup front-end, back-end, reverse proxy using nginx, and postgre DB.
+once the docker-compose file is up, it completely setup the whole infrastructure.
 
-Docker-compose.yml
+```
+docker-compose up -d --build
+```
 
+## USER JOURNEY
 
+1) First of all ansible playbook is to be executed to setup a VM on base server.
+
+2) Secondly docker-compose will be executed using the playbook inside the KVM machine that is being setup.

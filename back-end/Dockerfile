@@ -18,16 +18,21 @@ RUN git clone https://github.com/gothinkster/productionready-django-api.git
 
 WORKDIR "productionready-django-api"
 
+ENV DATABASE_NAME=testdb
+ENV DATABASE_USER=Jane
+ENV DATABASE_PASSWORD=ABC123
+ENV DATABASE_HOST=192.168.0.102
+ENV DATABASE_PORT=5432
+
+ADD script.sh ~/DJANGO/productionready-django-api/
+
 RUN pip install -r requirements.txt
+
+## To apply patches
+
+RUN script.sh
 
 RUN python manage.py migrate
 
-
 ## serve with hot reload at localhost:8000
 EXPOSE 80
-
-
-#ENTRYPOINT ["python"]
-#CMD ["manage.py runserver 0.0.0.0:8000"]
-
-#python manage.py runserver 0.0.0.0:8000

@@ -6,24 +6,19 @@ networks:
 
 services:
 
-  # django:
-  #   # image: django_my_image
-  #   # container_name: django_backend
-  #   build:
-  #     context: .
-  #     dockerfile: /home/saad/Documents/Github/DevOps-Homework/back-end/Dockerfile
-  #   command: python manage.py runserver 0.0.0.0:8000
-  #   expose:
-  #     - 8000
-  #   ports:
-  #     - "8000:8000"
-  #   networks:
-  #     - monitor-net
-
+  django:
+    build:
+      context: .
+      dockerfile: /home/saad/Documents/Github/DevOps-Homework/back-end/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    networks:
+      - monitor-net
 
   vuejs:
-    # image: image_name
-    # container_name: vuejs_frontend
     build:
       context: .
       dockerfile: /home/saad/Documents/Github/DevOps-Homework/front-end/Dockerfile    
@@ -31,5 +26,28 @@ services:
       - 8080
     ports:
       - "8080:8080"
+    networks:
+      - monitor-net
+
+  PostgreSQL:
+    restart: always
+    image: postgres
+    expose:
+      - 8080
+    ports:
+      - "5432:5432"
+    networks:
+      - monitor-net
+
+  reverse:
+    container_name: reverse
+    hostname: reverse
+    image: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - <path/to/your/config>:/etc/nginx
+      - <path/to/your/certs>:/etc/ssl/private
     networks:
       - monitor-net

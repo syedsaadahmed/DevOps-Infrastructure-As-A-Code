@@ -1,0 +1,14 @@
+
+Command to build docker image from Dockerfile
+
+```
+docker build -t django_my_image .
+```
+
+
+
+Command to run docker container from image
+
+```
+docker run -itd -p 8000:80 --name dockerize-django-app django_my_image
+```
