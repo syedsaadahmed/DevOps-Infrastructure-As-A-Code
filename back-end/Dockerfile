@@ -8,31 +8,40 @@ RUN mkdir ~/DJANGO
 WORKDIR "~/DJANGO"
 
 ## installing dependencies
-RUN apt-get update && apt-get install -y curl build-essential git libreadline-dev zlib1g-dev libssl-dev libbz2-dev libsqlite3-dev software-properties-common python3 python3-pip
-RUN echo "alias python='python3'" >> ~/.bashrc
-RUN ln -s /usr/bin/pip3 /usr/bin/pip
-RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN apt-get update && apt-get install -y curl build-essential git libreadline-dev zlib1g-dev libssl-dev libbz2-dev libsqlite3-dev software-properties-common python3 python3-pip python-distribute python-dev libpq-dev
+
+
+
+#RUN echo "alias python='python3'" >> ~/.bashrc
+#RUN ln -s /usr/bin/pip3 /usr/bin/pip
+#RUN ln -s /usr/bin/python3 /usr/bin/python
 
 ## cloning the real world Django reporsitory
 RUN git clone https://github.com/gothinkster/productionready-django-api.git
 
 WORKDIR "productionready-django-api"
 
-ENV DATABASE_NAME=testdb
-ENV DATABASE_USER=Jane
-ENV DATABASE_PASSWORD=ABC123
-ENV DATABASE_HOST=192.168.0.102
-ENV DATABASE_PORT=5432
+#ENV DATABASE_NAME=iotplatform
+#ENV DATABASE_USER=iotplatform
+#ENV DATABASE_PASSWORD=iotplatform
+#ENV DATABASE_HOST=http://postgresql
+#ENV DATABASE_PORT=5432
 
-ADD script.sh ~/DJANGO/productionready-django-api/
 
-RUN pip install -r requirements.txt
+RUN sed -i "88 c\        'ENGINE': 'django.db.backends.postgresql','USER': 'iotplatform','PASSWORD': 'iotplatform','HOST': 'postgresql','PORT': '5432'," ./conduit/settings.py
 
-## To apply patches
+RUN sed -i "89 c\        'NAME': 'iotplatform'" ./conduit/settings.py  
 
-RUN script.sh
 
-RUN python manage.py migrate
+RUN pip3 install -r requirements.txt
+
+RUN pip3 install psycopg2
+
+RUN pip3 install Django
+
+#RUN easy_install psycopg2
+
+#RUN python3 manage.py migrate
 
 ## serve with hot reload at localhost:8000
 EXPOSE 80

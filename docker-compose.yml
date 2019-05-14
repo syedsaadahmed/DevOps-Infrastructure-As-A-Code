@@ -1,4 +1,4 @@
-version: '2'
+version: '3.1'
 
 networks:
   monitor-net:
@@ -6,48 +6,79 @@ networks:
 
 services:
 
+
+#  PostgreSQL:
+    #restart: always
+  postgresql:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: iotplatform
+      POSTGRES_USER: iotplatform
+      POSTGRES_PASSWORD: iotplatform
+    ports:
+      - "5432:5432"
+    networks:
+      - monitor-net
+
+
   django:
     build:
       context: .
-      dockerfile: /home/saad/Documents/Github/DevOps-Homework/back-end/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+      dockerfile: ./back-end/Dockerfile
+    #command: python3 manage.py migrate --noinput && python3 manage.py runserver 0.0.0.0:8000
+    command: >
+      bash -c "python3 manage.py migrate --noinput
+      && python3 manage.py runserver 0.0.0.0:8000"    
     expose:
       - 8000
     ports:
       - "8000:8000"
     networks:
       - monitor-net
+    links:
+      - postgresql:postgresql
+    depends_on:
+      - postgresql      
 
   vuejs:
     build:
       context: .
-      dockerfile: /home/saad/Documents/Github/DevOps-Homework/front-end/Dockerfile    
-    expose:
-      - 8080
+      dockerfile: ./front-end/Dockerfile
+    # expose:
+    #   - 8080
+    environment:
+      HOST: 0.0.0.0
     ports:
       - "8080:8080"
     networks:
       - monitor-net
 
-  PostgreSQL:
-    restart: always
-    image: postgres
-    expose:
-      - 8080
+
+
+
+  nginx_tomcat:
+    image: nginx
+    volumes:
+      - ./proxyConf:/etc/nginx/conf.d
     ports:
-      - "5432:5432"
+      - 443:443
+      #- 80:80
+      - 1871:1871 
+    links:
+      - django:django
+      - vuejs:vuejs
     networks:
       - monitor-net
 
-  reverse:
-    container_name: reverse
-    hostname: reverse
-    image: nginx
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - <path/to/your/config>:/etc/nginx
-      - <path/to/your/certs>:/etc/ssl/private
-    networks:
-      - monitor-net
+  # reverse:
+  #   container_name: reverse
+  #   hostname: reverse
+  #   image: nginx
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - <path/to/your/config>:/etc/nginx
+  #     - <path/to/your/certs>:/etc/ssl/private
+  #   networks:
+  #     - monitor-net

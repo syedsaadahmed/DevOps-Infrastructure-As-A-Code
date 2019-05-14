@@ -26,7 +26,7 @@ WORKDIR "vue-realworld-example-app"
 RUN yarn install
 
 ## serve with hot reload at localhost:8080
-EXPOSE 80
+EXPOSE 8080
 
 
 ENTRYPOINT [ "sh", "-c", "yarn serve" ]
