@@ -54,7 +54,6 @@
         - docker_compose_check.msg is defined
         - docker_compose_check.msg.find('No such file or directory') != -1
 
-
     - name: Clone repo
       git:
         repo: https://github.com/syedsaadahmed/DevOps-Homework.git
