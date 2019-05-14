@@ -15,8 +15,8 @@ services:
       POSTGRES_DB: iotplatform
       POSTGRES_USER: iotplatform
       POSTGRES_PASSWORD: iotplatform
-    ports:
-      - "5432:5432"
+#    ports:
+#     - "5432:5432"
     networks:
       - monitor-net
 
@@ -25,14 +25,15 @@ services:
     build:
       context: .
       dockerfile: ./back-end/Dockerfile
+      #depends_on: postgresql  
     #command: python3 manage.py migrate --noinput && python3 manage.py runserver 0.0.0.0:8000
     command: >
       bash -c "python3 manage.py migrate --noinput
       && python3 manage.py runserver 0.0.0.0:8000"    
     expose:
       - 8000
-    ports:
-      - "8000:8000"
+#    ports:
+#      - "8000:8000"
     networks:
       - monitor-net
     links:
@@ -48,8 +49,8 @@ services:
     #   - 8080
     environment:
       HOST: 0.0.0.0
-    ports:
-      - "8080:8080"
+#    ports:
+#      - "8080:8080"
     networks:
       - monitor-net
 
