@@ -9,7 +9,7 @@ DevOps Homework by 3yourmind for testing purposes. Contains all the Dockerfile(s
 Front end folder in the repositry contains the docker file to create a docker image consisting of Vue.js real world example deployed in the image, once the container will be started, it will server front-end at certain port. This image is being setup using ubuntu:16.04 official docker image from dockerhub.
 
 ```
-localhost:8080/
+https://localhost:80/
 ```
 
 ## BACK END
@@ -17,7 +17,7 @@ localhost:8080/
 Back end folder in the repositry contains the docker file to create a docker image consisting of Django real world example deployed in the image, once the container will be started, it will server back-end at certain port. This image is being setup using ubuntu:16.04 official docker image from dockerhub.
 
 ```
-localhost:8000/
+localhost:1871/
 ```
 
 ## ANSIBLE PLAYBOOK
@@ -27,8 +27,13 @@ Secondly the role vm-setup is executed, using which the centos 7 KVM machine is 
 To execute the playbook one must have ansible installed.
 
 ```
-ansible-playbook DevOps-Homework/ansible-playbook/infra-setup.yml --extra-vars "host=XYZ KVMHostname=centos_7_machine baseServerIP=192.168.0.1"
+ansible-playbook DevOps-Homework/ansible-playbook/playbook.yml --extra-vars "host=XYZ"
 ```
+
+## REVERSE PROXY (nginx)
+
+In reverse proxy setup, self signed certificate are being generated using openssl. moreover in our case nginx is serving as reverse proxy for the infrastructure.
+
 
 ## DOCKER INFRA-STRUCTURE
 
@@ -36,11 +41,13 @@ Docker-compose.yml, contains all the steps to setup front-end, back-end, reverse
 once the docker-compose file is up, it completely setup the whole infrastructure.
 
 ```
-docker-compose up -d --build
+docker-compose --build
+docker-compose up -d postgresql
+docker-compose up -d 
 ```
 
-## USER JOURNEY
+## STEPS TO BE TAKEN
 
-1) First of all ansible playbook is to be executed to setup a VM on base server.
+1) First of all ansible playbook is to be executed on the node to setup docker, docker-compose and other dependencies on node machine which is supposed to be a centos 7 machine.
 
-2) Secondly docker-compose will be executed using the playbook inside the KVM machine that is being setup.
+2) Secondly steps mentioned in docker infrastructure part will be executed using the commands to make the infra up and working. It will build front-end, back-end, postgresql db and reverse proxy docker images and then bring up the containers.
